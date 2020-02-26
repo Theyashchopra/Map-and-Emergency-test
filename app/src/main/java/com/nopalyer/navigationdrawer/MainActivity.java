@@ -23,22 +23,25 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    String[] perms = {
+    public static final int MULTIPLE_PERMISSIONS = 10; // code you want.
+
+    String[] permissions= new String[]{
             Manifest.permission.SEND_SMS,
-            };
+            Manifest.permission.ACCESS_FINE_LOCATION};
     DrawerLayout drawerLayout;
     Toolbar toolbar;
     NavigationView navigationView;
     ActionBarDrawerToggle toggle;
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 31;
     private static final int REQUEST_ACCESS_FINE_LOCATION = 111, REQUEST_SEND_SMS = 112;
-
     public static Location currLoc;
     FusedLocationProviderClient fusedLocationProviderClient;
     private static final int REQUEST_CODE = 101;
     String uri;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,28 +57,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
         Toast.makeText(this, "App running", Toast.LENGTH_SHORT).show();
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        boolean hasPermissionLocation = (ContextCompat.checkSelfPermission(getApplicationContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
-        if (!hasPermissionLocation) {
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_ACCESS_FINE_LOCATION);
+        if(!checkPermissions()) {
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+          /*  boolean hasPermissionLocation = (ContextCompat.checkSelfPermission(getApplicationContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
+            if (!hasPermissionLocation) {
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        REQUEST_ACCESS_FINE_LOCATION);
+            }
+            boolean hasPermissionWrite = (ContextCompat.checkSelfPermission(getApplicationContext(),
+                    Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED);
+            if (!hasPermissionWrite) {
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.SEND_SMS},
+                        REQUEST_SEND_SMS);
+            }*/
+            fetchLastLocation();
         }
-        boolean hasPermissionWrite = (ContextCompat.checkSelfPermission(getApplicationContext(),
-                Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED);
-        if (!hasPermissionWrite) {
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.SEND_SMS},
-                    REQUEST_SEND_SMS);
-        }
-        fetchLastLocation();
     }
     private void fetchLastLocation() {
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_ACCESS_FINE_LOCATION);
-            return;
-        }
         Task<Location> task = fusedLocationProviderClient.getLastLocation();
         task.addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
@@ -87,7 +88,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
     }
+    private  boolean checkPermissions() {
+        int result;
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        for (String p:permissions) {
+            result = ContextCompat.checkSelfPermission(this,p);
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(p);
+            }
+        }
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),MULTIPLE_PERMISSIONS );
+            return false;
+        }
+        return true;
+    }
+
     @Override
+    public void onRequestPermissionsResult(int requestCode, String permissionsList[], int[] grantResults) {
+        switch (requestCode) {
+            case MULTIPLE_PERMISSIONS:{
+                if (grantResults.length > 0) {
+                    String permissionsDenied = "";
+                    for (String per : permissionsList) {
+                        if(grantResults[0] == PackageManager.PERMISSION_DENIED){
+                            permissionsDenied += "\n" + per;
+                        }
+                    }
+                    // Show permissionsDenied
+                   // updateViews();
+                }
+                return;
+            }
+        }
+    }
+  /*  @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
@@ -124,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             i++;
         }
-    }
+    }*/
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
