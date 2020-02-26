@@ -59,20 +59,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toast.makeText(this, "App running", Toast.LENGTH_SHORT).show();
         if(!checkPermissions()) {
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-          /*  boolean hasPermissionLocation = (ContextCompat.checkSelfPermission(getApplicationContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);
-            if (!hasPermissionLocation) {
-                ActivityCompat.requestPermissions(MainActivity.this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        REQUEST_ACCESS_FINE_LOCATION);
-            }
-            boolean hasPermissionWrite = (ContextCompat.checkSelfPermission(getApplicationContext(),
-                    Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED);
-            if (!hasPermissionWrite) {
-                ActivityCompat.requestPermissions(MainActivity.this,
-                        new String[]{Manifest.permission.SEND_SMS},
-                        REQUEST_SEND_SMS);
-            }*/
             fetchLastLocation();
         }
     }
@@ -115,52 +101,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             permissionsDenied += "\n" + per;
                         }
                     }
-                    // Show permissionsDenied
-                   // updateViews();
                 }
                 return;
             }
         }
     }
-  /*  @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQUEST_ACCESS_FINE_LOCATION: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(MainActivity.this, "Permission granted.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MainActivity.this, "The app was not allowed to get your location.", Toast.LENGTH_LONG).show();
-                }
-            }
-            case REQUEST_SEND_SMS: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(MainActivity.this, "Permission granted.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MainActivity.this, "The app was not allowed to write to your sms.", Toast.LENGTH_LONG).show();
-                }
-            }
-        }
-    }
-    public void checkper() {
-        int i=0;
-        while (i<2) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)) {
-                } else {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, REQUEST_SEND_SMS);
-                }
-            }
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                } else {
-                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_ACCESS_FINE_LOCATION);
-                }
-            }
-            i++;
-        }
-    }*/
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
@@ -182,30 +127,4 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return false;
     }
-/*
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case 31: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getApplicationContext(),"Permissions available",Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Permission failed", Toast.LENGTH_LONG).show();
-                    return;
-                }
-            }
-        }
-    }
-
-    public void checkper() {
-        Toast.makeText(this, "chcking permissions", Toast.LENGTH_SHORT).show();
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
-            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.SEND_SMS)) {
-                Toast.makeText(this,"permissions available",Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this,"accessing permission",Toast.LENGTH_SHORT).show();
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS}, MY_PERMISSIONS_REQUEST_SEND_SMS);
-            }
-        }
-    }*/
 }
